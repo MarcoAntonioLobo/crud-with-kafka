@@ -1,17 +1,16 @@
-# Etapa de build
-FROM maven:3.9.3-eclipse-temurin-17 AS build
+# Dockerfile.dev
+
+# Use a imagem Maven + JDK 17 (para build e testes)
+FROM maven:3.9.2-eclipse-temurin-17 AS dev
+
 WORKDIR /app
+
+# Copia o pom e o código-fonte
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -DskipTests
 
-# Etapa de runtime
-FROM eclipse-temurin:17-jdk
-WORKDIR /app
-COPY --from=build /app/target/user-crud-events-0.0.1-SNAPSHOT.jar app.jar
+# Instala dependências sem rodar os testes ainda
+RUN mvn dependency:resolve
 
-# Porta do serviço
-EXPOSE 8080
-
-# Comando para rodar a aplicação
-ENTRYPOINT ["java","-jar","app.jar"]
+# Comando default para abrir o container pronto para desenvolvimento/testes
+CMD ["bash"]
