@@ -1,16 +1,13 @@
-# Dockerfile.dev
-
-# Use a imagem Maven + JDK 17 (para build e testes)
-FROM maven:3.9.2-eclipse-temurin-17 AS dev
-
+# Stage 1: build
+FROM maven:3.9.2-eclipse-temurin-17 AS build
 WORKDIR /app
-
-# Copia o pom e o código-fonte
 COPY pom.xml .
 COPY src ./src
+RUN mvn clean package -DskipTests -Dfile.encoding=UTF-8
 
-# Instala dependências sem rodar os testes ainda
-RUN mvn dependency:resolve
-
-# Comando default para abrir o container pronto para desenvolvimento/testes
-CMD ["bash"]
+# Stage 2: runtime
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","app.jar"]

@@ -10,7 +10,7 @@ public class UserEventProducer {
     private static final String TOPIC = "user-events";
 
     public UserEventProducer(KafkaTemplate<String, UserEvent> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate; // 🔑 atribuição correta
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public void publishEvent(UserEvent event) {
