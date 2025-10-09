@@ -9,7 +9,7 @@ import com.github.marcoantoniolobo.usercrud.model.User;
 public class UserProducer {
 
     private final KafkaTemplate<String, User> kafkaTemplate;
-    private static final String TOPIC = "users";
+    private static final String TOPIC = "user-events";
 
     public UserProducer(KafkaTemplate<String, User> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;

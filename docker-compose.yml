@@ -1,5 +1,7 @@
 services:
+  # ==============================
   # 🦓 Zookeeper
+  # ==============================
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.1
     container_name: zookeeper
@@ -9,8 +11,12 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    networks:
+      - user-crud-network
 
+  # ==============================
   # 🦜 Kafka Broker
+  # ==============================
   kafka:
     image: confluentinc/cp-kafka:7.9.1
     container_name: kafka
@@ -29,8 +35,12 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - user-crud-network
 
+  # ==============================
   # 🐘 PostgreSQL
+  # ==============================
   postgres:
     image: postgres:15
     container_name: postgres
@@ -43,8 +53,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - user-crud-network
 
+  # ==============================
   # 🚀 Spring Boot App
+  # ==============================
   user-crud-events:
     build:
       context: .
@@ -64,8 +78,12 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
       SERVER_PORT: 8080
+    networks:
+      - user-crud-network
 
+  # ==============================
   # 🧭 Kafka UI
+  # ==============================
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
@@ -78,6 +96,12 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_READONLY: "false"
+    networks:
+      - user-crud-network
 
 volumes:
   postgres_data:
+
+networks:
+  user-crud-network:
+    driver: bridge
